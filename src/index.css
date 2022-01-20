@@ -11,3 +11,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+h5{
+  text-decoration: underline;
+}
+
+.list{
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  width: 31.33%; /* as @passatgt mentioned in the comment, for the older browsers fallback */
+  width: calc(100% / 3);
+  border: 20px solid #fff;
+  display: inline-block;
+  outline: 10px white;
+  background-color: lightblue;
+  text-align: center;
+  font-size: 2em;
+  min-height: 700px;
+  border-radius:30px;
+}
+
+ul li{
+  list-style-type: none;
+
+}
+.card{
+  width:80%;
+  text-align: center;
+  margin:0 auto;
+  border-radius: 12px;
+  box-shadow: 2px 2px 5px royalblue;
+  background-color: lightskyblue;
+  height:auto;
+  color: midnightblue;
+}
