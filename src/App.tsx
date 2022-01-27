@@ -95,12 +95,12 @@ function App() {
         return (
             <div className="App">
                 <DragDropContext onDragEnd={onDragEn}>
-                    { _.map(todo, (data:any, key:any) => {
+                    { _.map(todo, (data,key:any) => {
                         return (
                             <div key={key} className={"column"}>
                                 <h3>{data.title}</h3>
-                                <Droppable droppableId={key}>
-                                    {(provided) => {
+                                <Droppable droppableId={key.toString()}>
+                                    {(provided,snapshot) => {
                                         return (
                                             <div
                                                 ref={provided.innerRef}
@@ -126,6 +126,7 @@ function App() {
                                                         </Draggable>
                                                     )
                                                 })}
+                                                {provided.placeholder}
                                             </div>
                                         )
                                     }}
