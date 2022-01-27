@@ -2,12 +2,12 @@ import React from 'react';
 import Card from "./Card";
 
 //définition de l'interface en TS
-interface List{
+export interface List{
     id :number,
     title :string,
     items :Card[],
 }
-
+/*
 //component
 const List = (props :List) => {
 
@@ -27,3 +27,4 @@ const List = (props :List) => {
 
 //export
 export default List;
+*/

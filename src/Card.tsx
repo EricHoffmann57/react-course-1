@@ -1,13 +1,12 @@
 import React from 'react';
 //définition de l'interface en TS
 
-interface Card{
+export interface Card{
     id :number,
     title :string,
     description: string,
 }
-
-//component
+/*
 export const Card = (props :Card) => {
     //destructuration de props
     const {id, title, description} = props;
@@ -20,5 +19,8 @@ export const Card = (props :Card) => {
         </li>
     )
 }
+
+ */
 //export
 export default Card;
+
