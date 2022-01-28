@@ -8,6 +8,11 @@
     justify-content: space-around;
 }
 
+.App .main-title{
+    text-align: center;
+    font-size: 2em;
+}
+
 .App .column {
     width: 30%;
 }
@@ -16,7 +21,7 @@
     width: 100%;
     height:auto;
     min-height: 500px;
-    background-color: gray;
+    background-color: #444;
     padding: 10px 10px 0 10px;
     border-radius: 7px;
     display: flex;
