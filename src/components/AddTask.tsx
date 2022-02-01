@@ -4,17 +4,17 @@ import styled, {css} from "styled-components";
 const Button = styled.button`
   background: transparent;
   border-radius: 3px;
-  border: 2px solid #70addb;
-  color: lightskyblue;
+  border: 2px solid #80db70;
+  color: #55ac46;
   margin: 0 1em;
   padding: 0.25em 1em;
 
   ${props =>
           props.primary &&
           css`
-      background: lightskyblue;
-      color: white;
-    `};
+            background: #87faa0;
+            color: white;
+          `};
 `
 
 function AddTask(props) {

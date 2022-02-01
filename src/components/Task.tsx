@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Draggable} from 'react-beautiful-dnd';
 import styled, {css} from 'styled-components';
 
@@ -26,11 +26,35 @@ const Button = styled.button`
             color: white;
           `};
 `
+const ButtonE = styled.button`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid #70d2db;
+  color: #70b6db;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+
+  ${props =>
+    props.primary &&
+    css`
+            background: #70dbcf;
+            color: white;
+          `};
+`
 
 function Task(props) {
 
     const [showNewTaskButton, setShowNewTaskButton] = useState(true);
-    const [update, setUpdate] = useState(props.task.content);
+    const [update, setUpdate] = useState([...props.task.content]);
+
+    const content= useRef()
+    useEffect(() => {
+        props.task.content = update;
+    });
+    // @ts-ignore
+    const handleClick = () => setUpdate(content.current.value);
+
+
     let [isEditItem, setIsEditItem] = useState(null)
 
 
@@ -44,7 +68,6 @@ function Task(props) {
 
     function onNewTaskInputComplete() {
         setShowNewTaskButton(true);
-        updateTask(props.columnId,props.index, props.task.id, update);
         setUpdate(update);
     }
 
@@ -71,15 +94,12 @@ function Task(props) {
         });
     }
 
-
-
     function editTask(columnId, taskId, index) {
         const column = props.state.columns[columnId];
         const taskIds = Array.from(column.taskIds);
         console.log(taskIds)
         taskId = props.state.tasks[index]
 
-        //let task = taskIds.find(elt => elt === taskId.id)
         console.log(update)
         console.log(taskId)
         setShowNewTaskButton(false);
@@ -88,55 +108,14 @@ function Task(props) {
         setIsEditItem(taskId.id)
     }
 
-    function updateTask(columnId, taskId, index, content)
-    {
-        const column = props.state.columns[columnId];
-        const taskIds = Array.from(column.taskIds);
-        taskId = props.state.tasks[index]
-        const newTaskId = taskId
-        let tasks = props.state.tasks
-        console.log(tasks)
-        console.log(update)
-        if(update && !showNewTaskButton) {
-            if (update === isEditItem) {
-                const updatedTask = {
-                    id: taskId,
-                    content: content,
-                }
-                props.setState({
-                    ...props.state,
-                    tasks: {
-                        ...props.state.tasks,
-                        [taskId]: updatedTask
-                    },
-                    columns: {
-                        ...props.state.columns,
-                        [columnId]: {
-                            ...column,
-                            taskIds: taskIds
-
-                        }
-                    }
-
-                });
-                setShowNewTaskButton(true)
-               // setUpdate('')
-                //setDescription("")
-                setIsEditItem(null)
-                onNewTaskButtonClick()
-            }
-        }
-
-    }
-
     return (
         <Draggable draggableId={props.task.id} index={props.index}>
             {provided => (
                 <Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
-                    <h3>{update}</h3>
+                <h3>{update}</h3>
                     {showNewTaskButton ?
-                        <Button onClick={() => editTask(props.columnId, props.index,props.task.id)}> Edit</Button> :
-                        <input type="text" value={update} onChange={handleInputChange} onBlur={onNewTaskInputComplete}/>
+                        <ButtonE onClick={() => editTask(props.columnId, props.index,props.task.id)}> Edit</ButtonE> :
+                        <input type="text" ref={content} value={update} onChange={handleClick} onBlur={onNewTaskInputComplete}/>
                     }
                     <Button onClick={() => deleteTask(props.columnId, props.index, props.task.id)}> X</Button>
                 </Container>

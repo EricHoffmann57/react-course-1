@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled, {css} from 'styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './Task';
@@ -37,8 +37,42 @@ const Button = styled.button`
             color: white;
           `};
 `
+const ButtonE = styled.button`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid #70d2db;
+  color: #70b6db;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+
+  ${props =>
+    props.primary &&
+    css`
+            background: #70dbcf;
+            color: white;
+          `};
+`
+
 
 function Column(props) {
+
+    const [showNewTaskButton, setShowNewTaskButton] = useState(true);
+    const [updateTitle, setUpdatedTitle] = useState(props.column.title);
+    let [isEditItem, setIsEditItem] = useState(null)
+
+
+    function onNewTaskButtonClick() {
+        setShowNewTaskButton(false);
+    }
+
+    function handleInputChange(event) {
+        setUpdatedTitle(event.target.value);
+    }
+
+    function onNewTaskInputComplete() {
+        setShowNewTaskButton(true);
+        setUpdatedTitle(updateTitle);
+    }
 
     function deleteColumn(columnId, index) {
         const columnTasks = props.state.columns[columnId].taskIds;
@@ -65,12 +99,25 @@ function Column(props) {
         });
     }
 
+    function editTitle(columnId, index) {
+        const column = props.state.columns[index]
+        console.log(column)
+        setShowNewTaskButton(false);
+        setUpdatedTitle(updateTitle)
+        console.log(updateTitle)
+        setIsEditItem(column)
+    }
+
     return (
         <Draggable draggableId={props.column.id} index={props.index}>
             {provided => (
                 <Container {...provided.draggableProps} ref={provided.innerRef}>
                     <Title {...provided.dragHandleProps}>
-                        {props.column.title}
+                        {updateTitle}
+                        {showNewTaskButton ?
+                            <ButtonE onClick={() => editTitle(props.columnId, props.index)}> Edit</ButtonE> :
+                            <input type="text" value={updateTitle} onChange={handleInputChange} onBlur={onNewTaskInputComplete}/>
+                        }
                         <Button onClick={() => deleteColumn(props.column.id, props.index)}> X</Button>
                     </Title>
                     <Droppable droppableId={props.column.id} type="task">
