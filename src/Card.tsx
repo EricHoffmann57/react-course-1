@@ -1,10 +1,10 @@
-import React from 'react';
+
 //définition de l'interface en TS
 
 export interface Card{
-    id :number,
+    id :string,
     title :string,
-   // description: string,
+    description: string,
 }
 /*
 export const Card = (props :Card) => {
@@ -20,7 +20,6 @@ export const Card = (props :Card) => {
     )
 }
 
- */
 //export
 export default Card;
-
+*/

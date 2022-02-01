@@ -1,35 +1,35 @@
 import React, {useState} from "react"
-import {List} from './List';
 import {DragDropContext, Draggable, Droppable, DropResult} from "react-beautiful-dnd"
-import {Card} from "./Card";
 import _ from 'lodash'
 import './App.css'
 import nextId from "react-id-generator";
+//import {Card} from "./Card";
+//import {List} from "./List";
 
-
+/*
 const cards = [
     {
         id: nextId(),
-        name: "Todo List React",
-        //  description: "todo1",
+        name: "ghhgh",
+        description: "todo1",
     },
     {
         id: nextId(),
         name: "Project Flutter",
-        //  description: "todo2",
+        description: "todo2",
     },
     {
         id: nextId(),
         name: "Play Symfony",
-        //  description: "todo3",
+        description: "todo3",
     },
     {
         id: nextId(),
         name: "Magento ou tard",
-        // description: "todo4",
+        description: "todo4",
     }
 ]
-
+*/
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     padding: 10,
@@ -44,34 +44,35 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     ...draggableStyle
 })
 
+
+
 const listItems = {
     "tasks": {
         id: '0',
         title: 'Todo',
-        items: cards,
+        items: [],
     },
     "progress": {
         id: '1',
         title: 'In progress',
-        items: [],
+        items: []
     },
     "done": {
         id: '2',
         title: 'Done!',
-        items: [],
+        items: []
     }
 }
 
 
 function App() {
-    const [todo, setTodo] = useState(listItems)
-
+    const [todo, setTodo] = useState<any>(listItems)
+   // const [cards, setCards] = useState<Array<Card>>([]);
     const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
+   // const [description, setDescription] = useState("")
 
-    const [toggleSubmit, setToggleSubmit] =useState(true)
-    const [isEditItem, setIsEditItem] =useState(null)
-
+    const [toggleSubmit, setToggleSubmit] = useState(true)
+    const [isEditItem, setIsEditItem] = useState(null)
 
 
     const onDragEn = (result: DropResult) => {
@@ -97,19 +98,19 @@ function App() {
             return prev
         })
     }
-    const addItem = () => {
-        if(!name) {
+    const addItem = (key) => {
+        if (!name) {
             alert('Enter a task');
-        } else if (name && !toggleSubmit) {
+        } else if (name && !toggleSubmit && key) {
             setTodo(prev => {
                 return {
                     ...prev,
                     tasks: {
                         id: "0",
                         title: "Todo",
-                        items: prev.tasks.items.map((elt) =>{
-                            if( elt.id === isEditItem){
-                                return { ...elt, name:name}
+                        items: prev.tasks.items.map((elt) => {
+                            if (elt.id === isEditItem) {
+                                return {...elt, name: name}
                             }
                             return elt;
                         })
@@ -123,7 +124,7 @@ function App() {
             setName('')
             //setDescription("")
             setIsEditItem(null)
-        }else{
+        } else {
             setTodo(prev => {
                 return {
                     ...prev,
@@ -141,7 +142,9 @@ function App() {
                     }
                 }
             })
+            setName("")
         }
+
     }
 
     const deleteTask = (id: any) => {
@@ -151,14 +154,25 @@ function App() {
                 tasks: {
                     id: "0",
                     title: "Todo",
-                    items: prev.tasks.items.filter((elt:any) => elt.id !== id)
+                    items: prev.tasks.items.filter((elt: any) => elt.id !== id)
+                },
+                progress: {
+                    id: "1",
+                    title: "In-Progress",
+                    items: prev.progress.items.filter((elt: any) => elt.id !== id)
+                },
+                done: {
+                    id: "2",
+                    title: "Done",
+                    items: prev.done.items.filter((elt: any) => elt.id !== id)
                 }
             }
         })
     }
 
-    const editItem = (id:any) => {
-        let newEditItem  = todo.tasks.items.find((elt) =>{
+
+    const editItem = (id: any) => {
+        let newEditItem = todo.tasks.items.find((elt) => {
             return elt.id === id
         });
         console.log(newEditItem);
@@ -176,7 +190,7 @@ function App() {
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} required={true}/><br/>
 
                 {
-                    toggleSubmit ?   <button onClick={addItem}>Add</button> :
+                    toggleSubmit ? <button onClick={addItem}>Add</button> :
                         <button onClick={addItem}>Update</button>
                 }
 
@@ -209,8 +223,11 @@ function App() {
                                                                     <h3>{elt.name}</h3>
                                                                 </div>
                                                                 <div className={"btn"}>
-                                                                    <button onClick={() =>editItem(elt.id)}>Edit</button>
-                                                                    <button onClick={() =>deleteTask(elt.id)}>Delete task</button>
+                                                                    <button onClick={() => editItem(elt.id)}>Edit
+                                                                    </button>
+                                                                    <button onClick={() => deleteTask(elt.id)}>Delete
+                                                                        task
+                                                                    </button>
                                                                 </div>
 
                                                             </div>

@@ -1,5 +1,7 @@
+
 import React from 'react';
-import Card from "./Card";
+import {Card} from "./Card";
+
 
 //définition de l'interface en TS
 export interface List{
@@ -16,6 +18,7 @@ const List = (props :List) => {
     console.log(id, title);
 
 
+    // @ts-ignore
     return (
         <div className="list"><h5>{ title }</h5>
             <ul>
