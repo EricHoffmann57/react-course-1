@@ -5,7 +5,7 @@ import styled, {css} from 'styled-components';
 
 const Container = styled.div`
   border: 1px solid lightgrey;
-  border-radius: 2px;
+  border-radius: 6px;
   padding: 8px;
   margin-bottom: 8px;
   background-color: white;
@@ -18,7 +18,6 @@ const Button = styled.button`
   color: palevioletred;
   margin: 0 1em;
   padding: 0.25em 1em;
-
   ${props =>
           props.primary &&
           css`
@@ -33,49 +32,72 @@ const ButtonE = styled.button`
   color: #70b6db;
   margin: 0 1em;
   padding: 0.25em 1em;
-
   ${props =>
-    props.primary &&
-    css`
+          props.primary &&
+          css`
             background: #70dbcf;
             color: white;
           `};
 `
 
+
 function Task(props) {
 
     const [showNewTaskButton, setShowNewTaskButton] = useState(true);
-    const [update, setUpdate] = useState([...props.task.content]);
+    const [updateTitle, setUpdateTitle] = useState(props.task.title);
+    const [updateDesc, setUpdateDesc] = useState(props.task.description);
+    const [updatePriority, setUpdatePriority] = useState(props.task.priority);
+    const [updateAssignedTo, setUpdateAssignedTo] = useState(props.task.assignedTo);
+    const [isChecked, setIsChecked] = useState(props.task.completed);
+    const [editingId, setEditingId] = useState(null);
 
-    const content= useRef()
+
+    const title = useRef()
+    const description = useRef()
+    const priority = useRef()
+    const assignedTo = useRef()
     useEffect(() => {
-        props.task.content = update;
+        props.task.title = updateTitle;
+        props.task.description = updateDesc;
+        props.task.priority = updatePriority;
+        props.task.assignedTo = updateAssignedTo;
     });
-    // @ts-ignore
-    const handleClick = () => setUpdate(content.current.value);
-
-
-    let [isEditItem, setIsEditItem] = useState(null)
-
 
     function onNewTaskButtonClick() {
         setShowNewTaskButton(false);
     }
-
-    function handleInputChange(event) {
-        setUpdate(event.target.value);
+    function handleInputChangeTitle(event) {
+        setUpdateTitle(event.target.value);
+    }
+    function handleInputChangeDesc(event) {
+        setUpdateDesc(event.target.value);
+    }
+    function handleInputChangePriority(event) {
+        setUpdatePriority(event.target.value);
+    }
+    function handleInputChangeAssignedTo(event) {
+        setUpdateAssignedTo(event.target.value);
     }
 
     function onNewTaskInputComplete() {
         setShowNewTaskButton(true);
-        setUpdate(update);
+        setUpdateTitle(updateTitle);
+        setUpdateDesc(updateDesc);
+        setUpdatePriority(updatePriority);
+        setUpdateAssignedTo(updateAssignedTo);
     }
+
+    const handleOnChangeStatus = () => {
+        props.task.completed = !props.task.completed
+        setIsChecked(!isChecked);
+    };
+
 
     function deleteTask(columnId, index, taskId) {
         const column = props.state.columns[columnId];
         const newTaskIds = Array.from(column.taskIds);
         newTaskIds.splice(index, 1);
-
+        taskId = props.state.tasks[index]
         const tasks = props.state.tasks;
         const {[taskId]: oldTask, ...newTasks} = tasks;
 
@@ -94,30 +116,54 @@ function Task(props) {
         });
     }
 
+
     function editTask(columnId, taskId, index) {
         const column = props.state.columns[columnId];
         const taskIds = Array.from(column.taskIds);
         console.log(taskIds)
         taskId = props.state.tasks[index]
-
-        console.log(update)
-        console.log(taskId)
         setShowNewTaskButton(false);
-        setUpdate(update)
-        console.log(update)
-        setIsEditItem(taskId.id)
+        console.log(taskId)
     }
 
     return (
         <Draggable draggableId={props.task.id} index={props.index}>
             {provided => (
-                <Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
-                <h3>{update}</h3>
+                <Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}
+                           isEditing={editingId === props.task.id}
+                           setEditingId={setEditingId}
+                >
+                   <article id={props.task.id}
+                            style={{padding:10, backgroundColor: isChecked ? '#A8E2BCFF' : '#dddddd' }}
+
+                   >
+                    <h3
+                        style={{ textDecoration: isChecked ? "line-through" : null }}
+                    >Title: {updateTitle}
+                        <input type="checkbox" value={props.task.completed}
+                               checked={isChecked}
+                               onChange={handleOnChangeStatus}
+                               style={{ height: 30,width:30}}
+                        />
+                    </h3><br />
+                    <p>Description: {updateDesc}</p><br />
+                    <h4>Priority: {updatePriority}</h4><br />
+                    <h4>Assigned to: {updateAssignedTo}</h4><br />
+                    <p>Completed : {isChecked.toString()}</p>
                     {showNewTaskButton ?
-                        <ButtonE onClick={() => editTask(props.columnId, props.index,props.task.id)}> Edit</ButtonE> :
-                        <input type="text" ref={content} value={update} onChange={handleClick} onBlur={onNewTaskInputComplete}/>
+                        <ButtonE
+                            onClick={() => editTask(props.columnId, props.index, props.task.id)}> Edit</ButtonE> :
+                        <div>
+                            <input type="text" ref={title} value={updateTitle} onChange={handleInputChangeTitle}/><br />
+                            <input type="text" ref={description} value={updateDesc} onChange={handleInputChangeDesc}/><br />
+                            <input type="text" ref={priority} value={updatePriority} onChange={handleInputChangePriority}/><br />
+                            <input type="text" ref={assignedTo} value={updateAssignedTo} onChange={handleInputChangeAssignedTo}/><br />
+
+                            <button type={"submit"} onClick={onNewTaskInputComplete}>Submit</button>
+                        </div>
                     }
                     <Button onClick={() => deleteTask(props.columnId, props.index, props.task.id)}> X</Button>
+                   </article>
                 </Container>
             )}
         </Draggable>
@@ -125,5 +171,3 @@ function Task(props) {
 }
 
 export default Task;
-
-

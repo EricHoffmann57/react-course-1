@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 
 function AddColumn(props) {
     const [showNewColumnButton, setShowNewColumnButton] = useState(true);
@@ -28,24 +28,30 @@ function AddColumn(props) {
             title: title,
             taskIds: [],
         };
-
-        props.setState({
-            ...props.state,
-            columnOrder: newColumnOrder,
-            columns: {
-                ...props.state.columns,
-                [newColumnId]: newColumn
-            }
-        });
+        if (newColumn.title !== "") {
+            props.setState({
+                ...props.state,
+                columnOrder: newColumnOrder,
+                columns: {
+                    ...props.state.columns,
+                    [newColumnId]: newColumn
+                }
+            });
+        }else{
+            alert('column title is required!')
+        }
     }
-
     return (
         <div>
             {
                 showNewColumnButton ?
                     <button onClick={onNewColumnButtonClick}>New Column</button> :
-                    <input type="text" value={value} onChange={handleInputChange} onBlur={onNewColumnInputComplete} />
+                    <div>
+                        <input type="text" value={value} onChange={handleInputChange}/>
+                        <button type={"submit"} onClick={onNewColumnInputComplete}>Add</button>
+                    </div>
             }
+
         </div>
     )
 }

@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import styled, {css} from 'styled-components';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import {Droppable, Draggable} from 'react-beautiful-dnd';
 import Task from './Task';
 import AddTask from './AddTask';
+
 
 const Container = styled.div`
   margin: 8px;
@@ -31,8 +32,8 @@ const Button = styled.button`
   padding: 0.25em 1em;
 
   ${props =>
-    props.primary &&
-    css`
+          props.primary &&
+          css`
             background: palevioletred;
             color: white;
           `};
@@ -46,20 +47,21 @@ const ButtonE = styled.button`
   padding: 0.25em 1em;
 
   ${props =>
-    props.primary &&
-    css`
+          props.primary &&
+          css`
             background: #70dbcf;
             color: white;
           `};
 `
-
+const Sort = styled.div`
+  display: inline-block;
+`
 
 function Column(props) {
 
     const [showNewTaskButton, setShowNewTaskButton] = useState(true);
     const [updateTitle, setUpdatedTitle] = useState(props.column.title);
-    let [isEditItem, setIsEditItem] = useState(null)
-
+    const [activeFilter, setActiveFilter] = useState("");
 
     function onNewTaskButtonClick() {
         setShowNewTaskButton(false);
@@ -72,7 +74,9 @@ function Column(props) {
     function onNewTaskInputComplete() {
         setShowNewTaskButton(true);
         setUpdatedTitle(updateTitle);
+        console.log(updateTitle)
     }
+
 
     function deleteColumn(columnId, index) {
         const columnTasks = props.state.columns[columnId].taskIds;
@@ -100,15 +104,22 @@ function Column(props) {
     }
 
     function editTitle(columnId, index) {
-        const column = props.state.columns[index]
-        console.log(column)
+        const column = props.state.columnOrder[index]
         setShowNewTaskButton(false);
         setUpdatedTitle(updateTitle)
-        console.log(updateTitle)
-        setIsEditItem(column)
+        console.log(column)
     }
 
+    const searchText = (e) => {
+        setActiveFilter(e.target.value);
+    }
+    let dataSearch = props.tasks.filter(item => {
+        return Object.keys(item).some(key =>
+            item[key].toString().toLowerCase().includes(activeFilter.toString().toLowerCase())
+        )
+    });
     return (
+
         <Draggable draggableId={props.column.id} index={props.index}>
             {provided => (
                 <Container {...provided.draggableProps} ref={provided.innerRef}>
@@ -116,23 +127,32 @@ function Column(props) {
                         {updateTitle}
                         {showNewTaskButton ?
                             <ButtonE onClick={() => editTitle(props.columnId, props.index)}> Edit</ButtonE> :
-                            <input type="text" value={updateTitle} onChange={handleInputChange} onBlur={onNewTaskInputComplete}/>
+                            <div>
+                                <input type="text" value={updateTitle} onChange={handleInputChange}/>
+                                <button type={"submit"} onClick={onNewTaskInputComplete}>Submit</button>
+                            </div>
                         }
                         <Button onClick={() => deleteColumn(props.column.id, props.index)}> X</Button>
                     </Title>
+                    Filter tasks: <input type="text" value={activeFilter} onChange={searchText}/>
+                    <Sort>
+                    </Sort>
                     <Droppable droppableId={props.column.id} type="task">
                         {provided => (
-                            <TaskList {...provided.droppableProps} ref={provided.innerRef}>
+                            <TaskList tasks={props.state.dataCopy}
+                                      handleBtns={props.handleBtns}{...provided.droppableProps} ref={provided.innerRef}
+                                      setTasks={props.setState}>
                                 {
-                                    props.tasks.map((task, index) =>
-                                        (<Task key={task.id} task={task} index={index} columnId={props.column.id} state={props.state} setState={props.setState} />)
+                                    dataSearch.map((task, index) =>
+                                        (<Task key={task.id} task={task} index={index} columnId={props.column.id}
+                                               state={props.state} setState={props.setState}/>)
                                     )
                                 }
                                 {provided.placeholder}
                             </TaskList>
                         )}
                     </Droppable>
-                    <AddTask columnId={props.column.id} state={props.state} setState={props.setState} />
+                    <AddTask columnId={props.column.id} state={props.state} setState={props.setState}/>
                 </Container>
             )}
         </Draggable>
