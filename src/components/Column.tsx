@@ -57,17 +57,17 @@ const Sort = styled.div`
   display: inline-block;
 `
 
-function Column(props) {
+function Column(props){
 
-    const [showNewTaskButton, setShowNewTaskButton] = useState(true);
-    const [updateTitle, setUpdatedTitle] = useState(props.column.title);
-    const [activeFilter, setActiveFilter] = useState("");
-
+    const [showNewTaskButton, setShowNewTaskButton] = useState<boolean>(true);
+    const [updateTitle, setUpdatedTitle] = useState<string>(props.column.title);
+    const [activeFilter, setActiveFilter] = useState<string>("");
+/*
     function onNewTaskButtonClick() {
         setShowNewTaskButton(false);
     }
-
-    function handleInputChange(event) {
+*/
+    function handleInputChange(event: { target: { value: React.SetStateAction<string>; }; }) {
         setUpdatedTitle(event.target.value);
     }
 
@@ -78,10 +78,10 @@ function Column(props) {
     }
 
 
-    function deleteColumn(columnId, index) {
-        const columnTasks = props.state.columns[columnId].taskIds;
+    function deleteColumn(columnId: string, index: number) {
+        const columnTasks:Array<string> = props.state.columns[columnId].taskIds;
 
-        const finalTasks = columnTasks.reduce((previousValue, currentValue) => {
+        const finalTasks:object = columnTasks.reduce((previousValue, currentValue) => {
             const {[currentValue]: oldTask, ...newTasks} = previousValue;
             return newTasks;
         }, props.state.tasks);
@@ -103,7 +103,7 @@ function Column(props) {
         });
     }
 
-    function editTitle(columnId, index) {
+    function editTitle(columnId:string, index:string) {
         const column = props.state.columnOrder[index]
         setShowNewTaskButton(false);
         setUpdatedTitle(updateTitle)
@@ -140,7 +140,7 @@ function Column(props) {
                     <Droppable droppableId={props.column.id} type="task">
                         {provided => (
                             <TaskList tasks={props.state.dataCopy}
-                                      handleBtns={props.handleBtns}{...provided.droppableProps} ref={provided.innerRef}
+                                     {...provided.droppableProps} ref={provided.innerRef}
                                       setTasks={props.setState}>
                                 {
                                     dataSearch.map((task, index) =>

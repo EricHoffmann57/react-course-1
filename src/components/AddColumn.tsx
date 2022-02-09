@@ -1,10 +1,19 @@
 import React, {useState} from "react";
 
-function AddColumn(props) {
-    const [showNewColumnButton, setShowNewColumnButton] = useState(true);
-    const [value, setValue] = useState("");
 
-    function handleInputChange(event) {
+function AddColumn(props:
+                       {
+                           state:
+                               {
+                                   columnOrder: Iterable<string> | ArrayLike<string>;
+                                   columns: {};
+                               };
+                           setState: (arg0: string | {} ) => void;
+                       }) {
+    const [showNewColumnButton, setShowNewColumnButton] = useState<boolean>(true);
+    const [value, setValue] = useState<string>("");
+
+    function handleInputChange(event: { target: { value: React.SetStateAction<string>; }; }) {
         setValue(event.target.value);
     }
 
@@ -18,17 +27,17 @@ function AddColumn(props) {
         setValue("");
     }
 
-    function addNewColumn(title) {
-        const newColumnOrder = Array.from(props.state.columnOrder);
+    function addNewColumn(title: string) {
+        const newColumnOrder:Array<string> = Array.from(props.state.columnOrder);
         const newColumnId = 'column-' + Math.floor(Math.random() * 100000);
         newColumnOrder.push(newColumnId);
 
-        const newColumn = {
+        const newColumn:object = {
             id: newColumnId,
             title: title,
-            taskIds: [],
+            taskIds: Array<string>()
         };
-        if (newColumn.title !== "") {
+        if (newColumn["title"] !== "") {
             props.setState({
                 ...props.state,
                 columnOrder: newColumnOrder,

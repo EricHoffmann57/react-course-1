@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled, {css} from "styled-components";
 import nextId from "react-id-generator";
 
+
 const Button = styled.button`
   background: transparent;
   border-radius: 3px;
@@ -17,54 +18,61 @@ const Button = styled.button`
           `};
 `
 
-function AddTask(props) {
-    const [showNewTaskButton, setShowNewTaskButton] = useState(true);
-    const [value, setValue] = useState("");
-    const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState("");
-    const [assignedTo, setAssignedTo] = useState("");
+function AddTask(props:
+                     { columnId: string;
+                         state: { columns: {} ;
+                             tasks: {};
+                         };
+                         setState: (arg0: string | {}) => void;
+                     }) {
+    const [showNewTaskButton, setShowNewTaskButton] = useState<boolean>(true);
+    const [value, setValue] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [priority, setPriority] = useState<string>("");
+    const [assignedTo, setAssignedTo] = useState<string>("");
+    const [completed, setCompleted] = useState<boolean>(false);
 
 
     function onNewTaskButtonClick() {
         setShowNewTaskButton(false);
     }
 
-    function handleInputChange(event) {
+    function handleInputChange(event: { target: { value: React.SetStateAction<string>; }; }) {
         setValue(event.target.value);
     }
-    function handleInputChangeDesc(event) {
+    function handleInputChangeDesc(event: { target: { value: React.SetStateAction<string>; }; }) {
         setDescription(event.target.value);
     }
-    function handleInputChangePriority(event) {
+    function handleInputChangePriority(event: { target: { value: React.SetStateAction<string>; }; }) {
         setPriority(event.target.value);
     }
-    function handleInputChangeAssignedTo(event) {
+    function handleInputChangeAssignedTo(event: { target: { value: React.SetStateAction<string>; }; }) {
         setAssignedTo(event.target.value);
     }
 
     function onNewTaskInputComplete() {
         setShowNewTaskButton(true);
-        addNewTask(props.columnId, value, description, priority, assignedTo);
+        addNewTask(props.columnId, value, description, priority, assignedTo, completed);
         setValue("");
         setDescription("");
         setPriority("");
         setAssignedTo("");
+        setCompleted(false)
     }
 
-    function addNewTask(columnId, title, description, priority, assignedTo) {
+    function addNewTask(columnId: string, title: string, description: string, priority: string, assignedTo: string, completed: boolean) {
         const newTaskId = nextId();
-
         const column = props.state.columns[columnId];
-        const newTaskIds = Array.from(column.taskIds);
+        const newTaskIds:Array<string> = Array.from(column.taskIds);
         newTaskIds.push(newTaskId);
 
-        const newTask = {
+       const newTask:object = {
             id: newTaskId,
             title: title,
             description: description,
             priority: priority,
             assignedTo: assignedTo,
-            completed: false
+            completed: completed
         }
         const isValidTask = Object.keys(newTask).reduce((res, k) => res && (!!newTask[k] || newTask[k] === false || !isNaN(parseInt(newTask[k]))), Object.keys(newTask).length > 0)
         if (isValidTask) {

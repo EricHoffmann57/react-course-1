@@ -41,15 +41,33 @@ const ButtonE = styled.button`
 `
 
 
-function Task(props) {
+function Task(props:
+                  {
+                      task:
+                          {
+                              title: string;
+                              description: string;
+                              priority: string;
+                              assignedTo: string;
+                              completed: false | true;
+                              id: string ;
+                          };
+                      state: {
+                          columns: {};
+                          tasks: { [x: string]: object; };
+                      };
+                      setState: (arg0: string | {}) => void;
+                      index: number;
+                      columnId: string;
+                  }
+) {
 
-    const [showNewTaskButton, setShowNewTaskButton] = useState(true);
-    const [updateTitle, setUpdateTitle] = useState(props.task.title);
-    const [updateDesc, setUpdateDesc] = useState(props.task.description);
-    const [updatePriority, setUpdatePriority] = useState(props.task.priority);
-    const [updateAssignedTo, setUpdateAssignedTo] = useState(props.task.assignedTo);
-    const [isChecked, setIsChecked] = useState(props.task.completed);
-    const [editingId, setEditingId] = useState(null);
+    const [showNewTaskButton, setShowNewTaskButton] = useState<boolean>(true);
+    const [updateTitle, setUpdateTitle] = useState<string>(props.task.title);
+    const [updateDesc, setUpdateDesc] = useState<string>(props.task.description);
+    const [updatePriority, setUpdatePriority] = useState<string>(props.task.priority);
+    const [updateAssignedTo, setUpdateAssignedTo] = useState<string>(props.task.assignedTo);
+    const [isChecked, setIsChecked] = useState<boolean>(false);
 
 
     const title = useRef()
@@ -62,20 +80,24 @@ function Task(props) {
         props.task.priority = updatePriority;
         props.task.assignedTo = updateAssignedTo;
     });
-
+    /*
     function onNewTaskButtonClick() {
         setShowNewTaskButton(false);
     }
-    function handleInputChangeTitle(event) {
+    */
+    function handleInputChangeTitle(event: { target: { value: React.SetStateAction<string>; }; }) {
         setUpdateTitle(event.target.value);
     }
-    function handleInputChangeDesc(event) {
+
+    function handleInputChangeDesc(event: { target: { value: React.SetStateAction<string>; }; }) {
         setUpdateDesc(event.target.value);
     }
-    function handleInputChangePriority(event) {
+
+    function handleInputChangePriority(event: { target: { value: React.SetStateAction<string>; }; }) {
         setUpdatePriority(event.target.value);
     }
-    function handleInputChangeAssignedTo(event) {
+
+    function handleInputChangeAssignedTo(event: { target: { value: React.SetStateAction<string>; }; }) {
         setUpdateAssignedTo(event.target.value);
     }
 
@@ -93,11 +115,11 @@ function Task(props) {
     };
 
 
-    function deleteTask(columnId, index, taskId) {
+    function deleteTask(columnId:string, index:number, taskId:string) {
         const column = props.state.columns[columnId];
-        const newTaskIds = Array.from(column.taskIds);
+        console.log(column)
+        const newTaskIds:Array<string> = Array.from(column.taskIds);
         newTaskIds.splice(index, 1);
-        taskId = props.state.tasks[index]
         const tasks = props.state.tasks;
         const {[taskId]: oldTask, ...newTasks} = tasks;
 
@@ -117,7 +139,7 @@ function Task(props) {
     }
 
 
-    function editTask(columnId, taskId, index) {
+    function editTask(columnId: string, taskId: number | object, index: string) {
         const column = props.state.columns[columnId];
         const taskIds = Array.from(column.taskIds);
         console.log(taskIds)
@@ -130,40 +152,43 @@ function Task(props) {
         <Draggable draggableId={props.task.id} index={props.index}>
             {provided => (
                 <Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}
-                           isEditing={editingId === props.task.id}
-                           setEditingId={setEditingId}
+
                 >
-                   <article id={props.task.id}
-                            style={{padding:10, backgroundColor: isChecked ? '#A8E2BCFF' : '#dddddd' }}
+                    <article id={props.task.id}
+                             style={{padding: 10, backgroundColor: isChecked ? '#A8E2BCFF' : '#dddddd'}}
 
-                   >
-                    <h3
-                        style={{ textDecoration: isChecked ? "line-through" : null }}
-                    >Title: {updateTitle}
-                        <input type="checkbox" value={props.task.completed}
-                               checked={isChecked}
-                               onChange={handleOnChangeStatus}
-                               style={{ height: 30,width:30}}
-                        />
-                    </h3><br />
-                    <p>Description: {updateDesc}</p><br />
-                    <h4>Priority: {updatePriority}</h4><br />
-                    <h4>Assigned to: {updateAssignedTo}</h4><br />
-                    <p>Completed : {isChecked.toString()}</p>
-                    {showNewTaskButton ?
-                        <ButtonE
-                            onClick={() => editTask(props.columnId, props.index, props.task.id)}> Edit</ButtonE> :
-                        <div>
-                            <input type="text" ref={title} value={updateTitle} onChange={handleInputChangeTitle}/><br />
-                            <input type="text" ref={description} value={updateDesc} onChange={handleInputChangeDesc}/><br />
-                            <input type="text" ref={priority} value={updatePriority} onChange={handleInputChangePriority}/><br />
-                            <input type="text" ref={assignedTo} value={updateAssignedTo} onChange={handleInputChangeAssignedTo}/><br />
+                    >
+                        <h3
+                            style={{textDecoration: isChecked ? "line-through" : null}}
+                        >Title: {updateTitle}
+                            <input type="checkbox"
+                                   checked={isChecked}
+                                   onChange={handleOnChangeStatus}
+                                   style={{height: 30, width: 30}}
+                            />
+                        </h3><br/>
+                        <p>Description: {updateDesc}</p><br/>
+                        <h4>Priority: {updatePriority}</h4><br/>
+                        <h4>Assigned to: {updateAssignedTo}</h4><br/>
+                        <p>Completed : {isChecked.toString()}</p>
+                        {showNewTaskButton ?
+                            <ButtonE
+                                onClick={() => editTask(props.columnId, props.index, props.task.id)}> Edit</ButtonE> :
+                            <div>
+                                <input type="text" ref={title} value={updateTitle}
+                                       onChange={handleInputChangeTitle}/><br/>
+                                <input type="text" ref={description} value={updateDesc}
+                                       onChange={handleInputChangeDesc}/><br/>
+                                <input type="text" ref={priority} value={updatePriority}
+                                       onChange={handleInputChangePriority}/><br/>
+                                <input type="text" ref={assignedTo} value={updateAssignedTo}
+                                       onChange={handleInputChangeAssignedTo}/><br/>
 
-                            <button type={"submit"} onClick={onNewTaskInputComplete}>Submit</button>
-                        </div>
-                    }
-                    <Button onClick={() => deleteTask(props.columnId, props.index, props.task.id)}> X</Button>
-                   </article>
+                                <button type={"submit"} onClick={onNewTaskInputComplete}>Submit</button>
+                            </div>
+                        }
+                        <Button onClick={() => deleteTask(props.columnId, props.index, props.task.id)}> X</Button>
+                    </article>
                 </Container>
             )}
         </Draggable>
